@@ -1,2 +1,10 @@
 cd askon-data-clustering
 cmake src
+cd ..\askon-matching
+cmake src
+cd ..\askon-util
+cmake src
+cd ..\libyamlc
+cmake src
+cd ..\askon-matching-test
+cmake .

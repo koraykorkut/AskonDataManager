@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/askon-data-clustering/src/out/build/x64-Debug
+/askon-matching/src/out/build/x64-Debug
+/askon-matching-test/out/build/x64-Debug
+/askon-util/src/out/build/x64-Debug
+/libyamlc/src/out/build/x64-Debug
