@@ -1,0 +1,1 @@
+ASKON_MATCHING_HOME ortam deðiþkeni dictionary dizinin olduðu dizine set edilmelidir

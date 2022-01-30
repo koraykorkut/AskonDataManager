@@ -1,0 +1,128 @@
+#sample configuration
+
+data-definitions:
+  - 
+    name: customer-data-definition
+    fields:
+       -
+        name: Id
+        type: Number
+        length: 10
+       -
+        name: Name
+        type: Text
+        length: 100
+  - 
+    name: customer-key-file-data-definition
+    fields:
+       -
+        name: Key
+        type: Text
+        length: 10            
+       -
+        name: Id
+        type: Number
+        length: 10
+       -
+        name: Name
+        type: Text
+        length: 100
+  - 
+    name: customer-match-data-definition
+    fields:
+       -
+        name: ClusterId    
+       -
+        name: Id
+        type: Number
+        length: 10
+       -
+        name: Name
+        type: Text
+        length: 100
+
+file-definitions:
+  -
+   name: customer-file
+   path: c:\customers3.txt
+   format: Delimited
+   delimiter: Tab 
+   data-definition: customer-data-definition
+  -
+   name: customer-key-file
+   path: data/customer-key-file.txt
+   format: Delimited
+   delimiter: Comma 
+   data-definition: customer-key-file-data-definition   
+  -
+   name: customer-match-file
+   path: data/customer-match.txt
+   format: Delimited
+   delimiter: Comma 
+   data-definition: customer-match-data-definition
+       
+index-definitions:
+  -
+   name: customer-file-indx1
+   input-file: customer-file
+   key-fields:
+     -
+      name: Name
+      order: Asc
+   included-fields:
+     -
+      name: Id   
+     -
+      name: Name
+    
+matching-definitions:
+  -
+   name: customer-match
+   matching-fields:
+     - 
+      name: Name
+      match-type: PersonName
+      weight: 1 
+
+transformation-definitions:
+  -
+   name: key-file-generation
+   field-mappings:
+    -
+     input-field: Id
+     output-field: Id
+    -
+     input-field: Name
+     output-field: Key
+     transformation: PersonNameSearchKey(Typical)     
+    -
+     input-field: Name
+     output-field: Name
+        
+
+job-definitions:
+   -
+    name: generate-key-file
+    type: Transform
+    input-file: customer-file      
+    input-limit: 10000
+    output-file: customer-key-file
+    transformation-definition: key-file-generation
+
+   -
+    name: cluster-key-file
+    type: Cluster
+    input-file: customer-key-file
+    output-file: customer-match-file
+    match-level: Typical
+    matching-definition: customer-match
+    score-threshold: 97    
+    id-field : Id
+    key-fields:
+     -
+      name: Key
+    
+process-definition:
+  jobs:
+    - generate-key-file
+    - cluster-key-file
